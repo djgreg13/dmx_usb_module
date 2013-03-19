@@ -253,7 +253,7 @@ static int dmx_usb_setup(struct dmx_usb_device* dev)
 				FTDI_SIO_SET_DATA_REQUEST_TYPE,
 				urb_value , 0,
 				buf, 0, HZ*10) < 0) {
-		err("%s FAILED to set databits/stopbits/parity", __FUNCTION__);
+		pr_err("%s FAILED to set databits/stopbits/parity", __FUNCTION__);
 	}
 
 	if (usb_control_msg(dev->udev, usb_sndctrlpipe(dev->udev, 0),
@@ -261,7 +261,7 @@ static int dmx_usb_setup(struct dmx_usb_device* dev)
 				FTDI_SIO_SET_FLOW_CTRL_REQUEST_TYPE,
 				0, 0,
 				buf, 0, HZ*10) < 0) {
-		err("%s error from disable flowcontrol urb", __FUNCTION__);
+		pr_err("%s error from disable flowcontrol urb", __FUNCTION__);
 	}
 
 	dmx_usb_set_speed(dev);
@@ -284,7 +284,7 @@ static void dmx_usb_set_break(struct dmx_usb_device* dev, int break_state)
 				FTDI_SIO_SET_DATA_REQUEST_TYPE,
 				urb_value , 0,
 				buf, 2, HZ*10) < 0) {
-		err("%s FAILED to enable/disable break state (state was %d)", __FUNCTION__,break_state);
+		pr_err("%s FAILED to enable/disable break state (state was %d)", __FUNCTION__,break_state);
 	}
 
 
@@ -395,7 +395,7 @@ exit_not_opened:
 	return retval;
 }
 
-#if 0 
+#if 0
 
 Read is not yet supported
 
@@ -547,7 +547,7 @@ static ssize_t dmx_usb_write (struct file *file, const char *buffer, size_t coun
 	retval = usb_submit_urb(dev->write_urb, GFP_KERNEL);
 	if (retval) {
 		atomic_set (&dev->write_busy, 0);
-		err("%s - failed submitting write urb, error %d",
+		pr_err("%s - failed submitting write urb, error %d",
 		    __FUNCTION__, retval);
 	} else {
 		retval = bytes_written;
@@ -665,7 +665,7 @@ static int dmx_usb_probe(struct usb_interface *interface, const struct usb_devic
 			dev->bulk_in_endpointAddr = endpoint->bEndpointAddress;
 			dev->bulk_in_buffer = kmalloc (buffer_size, GFP_KERNEL);
 			if (!dev->bulk_in_buffer) {
-				err("Couldn't allocate bulk_in_buffer");
+				pr_err("Couldn't allocate bulk_in_buffer");
 				goto error;
 			}
 		}
@@ -678,7 +678,7 @@ static int dmx_usb_probe(struct usb_interface *interface, const struct usb_devic
 			/* a probe() may sleep and has no restrictions on memory allocations */
 			dev->write_urb = usb_alloc_urb(0, GFP_KERNEL);
 			if (!dev->write_urb) {
-				err("No free urbs available");
+				pr_err("No free urbs available");
 				goto error;
 			}
 			dev->bulk_out_endpointAddr = endpoint->bEndpointAddress;
@@ -697,7 +697,7 @@ static int dmx_usb_probe(struct usb_interface *interface, const struct usb_devic
 					buffer_size, GFP_KERNEL,
 					&dev->write_urb->transfer_dma);
 			if (!dev->bulk_out_buffer) {
-				err("Couldn't allocate bulk_out_buffer");
+				pr_err("Couldn't allocate bulk_out_buffer");
 				goto error;
 			}
 			usb_fill_bulk_urb(dev->write_urb, udev,
@@ -708,7 +708,7 @@ static int dmx_usb_probe(struct usb_interface *interface, const struct usb_devic
 		}
 	}
 	if (!(dev->bulk_in_endpointAddr && dev->bulk_out_endpointAddr)) {
-		err("Couldn't find both bulk-in and bulk-out endpoints");
+		pr_err("Couldn't find both bulk-in and bulk-out endpoints");
 		goto error;
 	}
 
@@ -799,7 +799,7 @@ static int __init dmx_usb_init(void)
 	/* register this driver with the USB subsystem */
 	result = usb_register(&dmx_usb_driver);
 	if (result) {
-		err("usb_register failed. Error number %d",
+		pr_err("usb_register failed. Error number %d",
 		    result);
 		return result;
 	}
