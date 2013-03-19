@@ -322,7 +322,7 @@ static int dmx_usb_open (struct inode *inode, struct file *file)
 
 	interface = usb_find_interface (&dmx_usb_driver, subminor);
 	if (!interface) {
-		err ("%s - error, can't find device for minor %d",
+		pr_err("%s - error, can't find device for minor %d",
 		     __FUNCTION__, subminor);
 		retval = -ENODEV;
 		goto exit_no_device;
@@ -639,7 +639,7 @@ static int dmx_usb_probe(struct usb_interface *interface, const struct usb_devic
 	/* allocate memory for our device state and initialize it */
 	dev = kmalloc (sizeof(struct dmx_usb_device), GFP_KERNEL);
 	if (dev == NULL) {
-		err ("Out of memory");
+		pr_err("Out of memory");
 		return -ENOMEM;
 	}
 	memset (dev, 0x00, sizeof (*dev));
@@ -722,7 +722,7 @@ static int dmx_usb_probe(struct usb_interface *interface, const struct usb_devic
 	retval = usb_register_dev (interface, &dmx_usb_class);
 	if (retval) {
 		/* something prevented us from registering this driver */
-		err ("Not able to get a minor for this device.");
+		pr_err("Not able to get a minor for this device.");
 		usb_set_intfdata (interface, NULL);
 		goto error;
 	}
