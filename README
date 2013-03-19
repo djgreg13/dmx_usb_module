@@ -1,4 +1,4 @@
-Forked for add kernel 3.6.x compatibility
+Forked for add kernel 3.6.x compatibility in branch dev-3.6
 
 The DMX USB driver is a Linux 2.6 kernel driver for the Enttec
 DMX USB dongle ( http://www.enttec.com/dmxusb.php )
